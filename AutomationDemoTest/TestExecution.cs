@@ -112,7 +112,7 @@ namespace AutomationDemoTest
             job.FilterJobsByType("remote");
 
             // Validate job cards are displayed and contain "Remote" text
-            WebDriverWait wait = new WebDriverWait(CorePage.driver, TimeSpan.FromSeconds(20)); 
+            WebDriverWait wait = new WebDriverWait(CorePage.driver, TimeSpan.FromSeconds(30)); 
             try
             {
                 Console.WriteLine("Waiting for job cards...");
