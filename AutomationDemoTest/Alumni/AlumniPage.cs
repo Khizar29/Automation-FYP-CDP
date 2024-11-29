@@ -2,26 +2,21 @@
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 namespace AutomationFYPCDP
 {
-    internal class JobPage : CorePage
+    internal class AlumniPage : CorePage
     {
         #region Locators
-        By loginnav= By.XPath("//*[@id=\"root\"]/div/header/div[1]/nav/div[3]/span");
-        By emailtxt = By.Id("email");
-        By passwordxt = By.Id("password");
-        By signinbtn = By.XPath("//*[@id=\"root\"]/div/header/div[3]/div/main/div/form/button");
-
-        #endregion
-
-        #region Locators
-        By jobnav = By.Id("jobs");
-        By searchtxt = By.XPath("//*[@id=\"root\"]/div/main/div/div[1]/div[1]/input");
+        By alumniNav = By.Id("alumni");
+        By searchBar = By.Id("search_alumni");
+        By searchBtn = By.Id("search_btn");
+        By profileCard = By.XPath("//*[@id=\"root\"]/div/main/div/div[3]/div[1]/div/div");
         By jobtypeselect = By.XPath("//*[@id=\"root\"]/div/main/div/div[1]/div[2]/div[1]/select");
-
         By remote = By.XPath("//*[@id=\"root\"]/div/main/div/div[1]/div[2]/div[1]/select/option[2]");
         By onsite = By.XPath("//*[@id=\"root\"]/div/main/div/div[1]/div[2]/div[1]/select/option[3]");
         By hybrid = By.XPath("//*[@id=\"root\"]/div/main/div/div[1]/div[2]/div[1]/select/option[4]");
@@ -31,39 +26,28 @@ namespace AutomationFYPCDP
 
         #endregion
 
-        public void NavigateToJobs()
+        public void NavigateToAlumnis()
         {
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-
-            try
-            {
-                // Wait for the overlay to either disappear or become non-blocking
-                wait.Until(drv =>
-                {
-                    var overlay = drv.FindElements(By.XPath("//div[contains(@class, 'fixed inset-0')]"));
-                    if (overlay.Count == 0)
-                    {
-                        // Overlay is not present in the DOM
-                        return true;
-                    }
-
-                    // Check if the overlay is not displayed or its `pointer-events` is set to none
-                    var style = overlay[0].GetCssValue("pointer-events");
-                    return !overlay[0].Displayed || style == "none";
-                });
-                Console.WriteLine("Blocking overlay is no longer visible or active.");
-            }
-            catch (WebDriverTimeoutException)
-            {
-                Console.WriteLine("No blocking overlay detected, proceeding...");
-            }
-
-            // Click on the 'Jobs' navigation link
-            IWebElement jobsNav = driver.FindElement(jobnav);
-            ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", jobsNav);
-            jobsNav.Click();
-            Console.WriteLine("Navigated to the Jobs page.");
+            // Click on the Alumni navigation link
+            driver.FindElement(alumniNav).Click();
+            Console.WriteLine("Navigated to the Alumni page.");
         }
+
+        public void SearchAlumni(string firstname) 
+        { 
+            // Wait for the search bar to be visible
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            IWebElement searchBarElement = wait.Until(drv => drv.FindElement(searchBar));
+            searchBarElement.SendKeys(firstname);
+            driver.FindElement(searchBtn).Click();
+
+            // Wait for the profile cards to be visible after search
+            IWebElement profileCardElement = wait.Until(drv => drv.FindElement(profileCard));
+            profileCardElement.Click();
+
+            Console.WriteLine("Navigated to the profile card of the alumni.");
+        }
+
 
 
 
@@ -71,6 +55,7 @@ namespace AutomationFYPCDP
         {
             // Open the job type dropdown
             driver.FindElement(jobtypeselect).Click();
+
             try
             {
                 // Dynamically build the XPath for the job type and make it case-insensitive
@@ -88,7 +73,7 @@ namespace AutomationFYPCDP
             }
 
             // Wait for job cards to appear
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
             try
             {
                 wait.Until(drv => drv.FindElements(By.XPath("//*[@id=\"root\"]/div/main/div/div[2]/div/div/div")).Count > 0);

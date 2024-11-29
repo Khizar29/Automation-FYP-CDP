@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace AutomationDemoTest
+namespace AutomationFYPCDP
 {
     internal class LoginPage : CorePage
     {
@@ -17,19 +17,12 @@ namespace AutomationDemoTest
 
         #endregion
 
-        public void Login(string url, string username, string password)
+        public void Login(string username, string password)
         {
-            // Navigate to the URL
-            driver.Url = url;
-
-            // Click on the login navigation link
             driver.FindElement(loginnav).Click();
-
             // Fill in the login form
             driver.FindElement(emailtxt).SendKeys(username);
             driver.FindElement(passwordxt).SendKeys(password);
-
-            // Click on the Sign In button
             driver.FindElement(signinbtn).Click();
 
             // Wait for the login modal to disappear or the "Logout" button to appear
@@ -55,16 +48,11 @@ namespace AutomationDemoTest
             }
         }
 
-        public void LoginInvalid(string url, string username, string password)
+        public void LoginInvalid(string username, string password)
         {
-            // Navigate to the URL
-            driver.Url = url;
-
             driver.FindElement(loginnav).Click();
-
             driver.FindElement(emailtxt).SendKeys(username);
             driver.FindElement(passwordxt).SendKeys(password);
-
             driver.FindElement(signinbtn).Click();
         }
     }
