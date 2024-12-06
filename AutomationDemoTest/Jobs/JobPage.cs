@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using AventStack.ExtentReports;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace AutomationFYPCDP
         By emailtxt = By.Id("email");
         By passwordxt = By.Id("password");
         By signinbtn = By.XPath("//*[@id=\"root\"]/div/header/div[3]/div/main/div/form/button");
+        
+
 
         #endregion
 
@@ -33,6 +36,7 @@ namespace AutomationFYPCDP
 
         public void NavigateToJobs()
         {
+            Step = Test.CreateNode("JobPage");
             WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
 
             try
@@ -62,6 +66,7 @@ namespace AutomationFYPCDP
             IWebElement jobsNav = driver.FindElement(jobnav);
             ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", jobsNav);
             jobsNav.Click();
+            CorePage.TakeScreenshot(Status.Pass, "Job Page navigated");
             Console.WriteLine("Navigated to the Jobs page.");
         }
 
@@ -69,6 +74,7 @@ namespace AutomationFYPCDP
 
         public void FilterJobsByType(string jobType)
         {
+
             // Open the job type dropdown
             driver.FindElement(jobtypeselect).Click();
             try
@@ -92,6 +98,7 @@ namespace AutomationFYPCDP
             try
             {
                 wait.Until(drv => drv.FindElements(By.XPath("//*[@id=\"root\"]/div/main/div/div[2]/div/div/div")).Count > 0);
+                CorePage.TakeScreenshot(Status.Pass, "Job filtered Successfully");
                 Console.WriteLine($"{jobType} jobs displayed successfully.");
             }
             catch (WebDriverTimeoutException)

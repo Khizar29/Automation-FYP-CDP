@@ -1,4 +1,5 @@
 ﻿
+using AventStack.ExtentReports;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -6,6 +7,7 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.Configuration;
 using System.Drawing;
+
 
 namespace AutomationFYPCDP
 {
@@ -21,9 +23,20 @@ namespace AutomationFYPCDP
             set { instance = value; }
             get { return instance; }
         }
+        [AssemblyInitialize()]
+        public static void AssemblyInit(TestContext context)
+        {
+            string ResultFile = @"C:\ExtentReports\TestExecLog_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".html";
+            CorePage.CreateReport(ResultFile);
+        }
+
+        [AssemblyCleanup()]
+        public static void AssemblyCleanup()
+        {
+            CorePage.extentReports.Flush();
+        }
 
         [ClassInitialize()]
-
         public static void ClassInit(TestContext context)
         {
 
@@ -41,6 +54,8 @@ namespace AutomationFYPCDP
 
             CorePage.SeleniumInit(ConfigurationManager.AppSettings["Browser"].ToString());
             CorePage.driver.Url = ConfigurationManager.AppSettings["Url"].ToString();
+            CorePage.Test = CorePage.extentReports.CreateTest(TestContext.TestName);
+
         }
 
         [TestCleanup()]
@@ -85,11 +100,12 @@ namespace AutomationFYPCDP
             LoginPage.LoginInvalid(username, password);
 
             // Wait for the error message to appear
-            WebDriverWait wait = new WebDriverWait(CorePage.driver, TimeSpan.FromSeconds(10));
+            WebDriverWait wait = new WebDriverWait(CorePage.driver, TimeSpan.FromSeconds(20));
             IWebElement errorAlert = wait.Until(drv => drv.FindElement(By.XPath("//div[contains(@class, 'MuiAlert-message')]")));
 
             // Verify the error message text
             string actualErrorMessage = errorAlert.Text;
+
             Assert.AreEqual("The password you entered is incorrect.", actualErrorMessage, "Error message does not match.");
         }
 
@@ -205,7 +221,6 @@ namespace AutomationFYPCDP
             alumni.NavigateToAlumnis();
             alumni.SearchAlumni(firstName);
         }
-        //checking
 
     }
 }
