@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using AventStack.ExtentReports;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
@@ -28,8 +29,10 @@ namespace AutomationFYPCDP
 
         public void NavigateToAlumnis()
         {
+            Step = Test.CreateNode("AlumniPage");
             // Click on the Alumni navigation link
             driver.FindElement(alumniNav).Click();
+            CorePage.TakeScreenshot(Status.Pass, "Alumni Directory entered");
             Console.WriteLine("Navigated to the Alumni page.");
         }
 
@@ -44,50 +47,11 @@ namespace AutomationFYPCDP
             // Wait for the profile cards to be visible after search
             IWebElement profileCardElement = wait.Until(drv => drv.FindElement(profileCard));
             profileCardElement.Click();
+            IWebElement profile = wait.Until(drv => drv.FindElement(By.XPath("//*[@id=\"root\"]/div/header[2]/div[2]/button[1]")));
 
             Console.WriteLine("Navigated to the profile card of the alumni.");
+            CorePage.TakeScreenshot(Status.Pass, "Alumni Card displayed");
         }
-
-
-
-
-        public void FilterJobsByType(string jobType)
-        {
-            // Open the job type dropdown
-            driver.FindElement(jobtypeselect).Click();
-
-            try
-            {
-                // Dynamically build the XPath for the job type and make it case-insensitive
-                string jobTypeXpath = $"//*[@id=\"root\"]/div/main/div/div[1]/div[2]/div[1]/select/option[translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = '{jobType.ToLower()}']";
-
-                // Locate and click the specified job type
-                var jobTypeElement = driver.FindElement(By.XPath(jobTypeXpath));
-                jobTypeElement.Click();
-                Console.WriteLine($"Selected '{jobType}' job type from the dropdown.");
-            }
-            catch (NoSuchElementException)
-            {
-                Console.WriteLine($"Job type '{jobType}' not found in the dropdown. Check the provided input or HTML structure.");
-                throw;
-            }
-
-            // Wait for job cards to appear
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-            try
-            {
-                wait.Until(drv => drv.FindElements(By.XPath("//*[@id=\"root\"]/div/main/div/div[2]/div/div/div")).Count > 0);
-                Console.WriteLine($"{jobType} jobs displayed successfully.");
-            }
-            catch (WebDriverTimeoutException)
-            {
-                Console.WriteLine($"No jobs displayed for the selected '{jobType}' filter.");
-                throw;
-            }
-        }
-
-
-
 
     }
 }

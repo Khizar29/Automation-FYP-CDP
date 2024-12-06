@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using AventStack.ExtentReports;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,12 @@ namespace AutomationFYPCDP
 
         public void Login(string username, string password)
         {
+            CorePage.Step = CorePage.Test.CreateNode("LoginPage");
             driver.FindElement(loginnav).Click();
             // Fill in the login form
             driver.FindElement(emailtxt).SendKeys(username);
             driver.FindElement(passwordxt).SendKeys(password);
+            TakeScreenshot(Status.Pass,"credentials entered" );
             driver.FindElement(signinbtn).Click();
 
             // Wait for the login modal to disappear or the "Logout" button to appear
@@ -38,11 +41,12 @@ namespace AutomationFYPCDP
 
                 // Alternatively, check for the presence of a "Logout" button or other post-login element
                 wait.Until(drv => drv.FindElement(By.XPath("//*[@id='home']/div[3]/div/button[text()='Logout']")).Displayed);
-
+                TakeScreenshot(Status.Pass, "Login Successful");
                 Console.WriteLine("Login successful, modal closed.");
             }
             catch (WebDriverTimeoutException)
             {
+                TakeScreenshot(Status.Fail, "Login Failed");
                 Console.WriteLine("Login modal did not close within the expected time.");
                 throw;
             }
@@ -54,6 +58,7 @@ namespace AutomationFYPCDP
             driver.FindElement(emailtxt).SendKeys(username);
             driver.FindElement(passwordxt).SendKeys(password);
             driver.FindElement(signinbtn).Click();
+   
         }
     }
 }

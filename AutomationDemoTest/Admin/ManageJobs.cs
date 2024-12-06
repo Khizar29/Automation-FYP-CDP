@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using AventStack.ExtentReports;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
@@ -32,8 +33,11 @@ namespace AutomationFYPCDP
 
         public void navigatetomanagejobs()
         {
+            Step = Test.CreateNode("ManageJobs");
             driver.FindElement(adminDashboardbtn).Click();
+            TakeScreenshot(Status.Pass, "Navigated to Admin Dashboard");
             driver.FindElement(adminJobsidebar).Click();
+            TakeScreenshot(Status.Pass, "Navigated to Manage Jobs");
 
         }
 
@@ -43,19 +47,23 @@ namespace AutomationFYPCDP
             driver.FindElement(newJob).Click();
             driver.FindElement(companyName).SendKeys(company);
             driver.FindElement(jobTitle).SendKeys(title);
+           
             driver.FindElement(jobType).Click();
             if (jobtype == "onsite") {driver.FindElement(onsite).Click(); }
             if (jobtype == "remote") { driver.FindElement(remote).Click(); }
             if (jobtype == "hybrid") { driver.FindElement(hybrid).Click(); }
             if (jobtype == "internship") { driver.FindElement(internship).Click(); }
+            TakeScreenshot(Status.Pass, "Company, title, Jobtype filled");
 
 
             // Use JavaScript to fill ReactQuill fields
             FillReactQuillField(jobDesc, description);
             FillReactQuillField(jobReq, requirements);
             FillReactQuillField(jobResp, responsibilites);
+            TakeScreenshot(Status.Pass, "react qull fields filled");
 
             driver.FindElement(jobLink).SendKeys(joblink);
+            TakeScreenshot(Status.Pass, "Job link filled");
             driver.FindElement(submitBtn).Click();
         }
 
